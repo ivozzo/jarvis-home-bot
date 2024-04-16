@@ -1,9 +1,10 @@
 import asyncio
 import modules.alt_text as altText
-#from sydney import SydneyClient
+import sys
+import getopt
 
 
-async def main() -> None:
+async def cli() -> None:
 
     print("Starting Jarvis, please hold on.")
     print("Jarvis startup completed.")
@@ -32,5 +33,44 @@ async def main() -> None:
             print("Jarvis is shutting down. Thank you sir")
             break
 
+
+def usage():
+    print("""
+Jarvis HELP
+          
+    -h  --help                  Shows this help section
+    -a  --generate--alt-text    Generate alt text for images found in a selected path
+    -f  --format                Select the format to filter the images
+    
+Don't select any of the above to enter CLI mode
+""")
+
+
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv, "haf:v", ["generate-alt-text=", "format="])
+    except getopt.GetoptError as error:
+        print(error)
+        sys.exit(2)
+
+    if len(opts) == 0:
+        print("Entering Jarvis CLI mode...")
+        asyncio.run(cli())
+    else:
+        # Default values
+        format="jpg"
+        path="."
+
+        # Getting user input values
+        for opt, arg in opts:
+            if opt == '-h':
+                usage()
+                sys.exit()
+            elif opt in ("-a", "--generate-alt-text"):
+                print("Generating alt text for images in path: %s" % arg)
+            elif opt in ("-f", "--format"):
+                print(arg)
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main(sys.argv[1:])
