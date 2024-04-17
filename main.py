@@ -1,8 +1,11 @@
 import asyncio
-import modules.utilities as altText
 import sys
 import getopt
 import modules.copilot as copilot
+import os
+import certifi
+os.environ['SSL_CERT_FILE'] = certifi.where()
+
 
 async def cli() -> None:
 
@@ -46,7 +49,7 @@ Select none of the above to enter CLI mode
 """)
 
 
-def main(argv):
+async def main(argv):
     try:
         opts, args = getopt.getopt(argv, "h:a:f", ["help", "generate-alt-text=", "format="])
     except getopt.GetoptError as error:
@@ -62,7 +65,6 @@ def main(argv):
         path = "."
         command = ""
 
-        print(opts)
         # Getting user input values
         for o, a in opts:
             if o == '-h':
@@ -77,8 +79,8 @@ def main(argv):
         print(command)
         if command == "alttext":
             print("Generating alt text for images in path: %s with format: %s" % (path, format))
-            copilot.get_alt_text(path, format)
+            await copilot.get_alt_text_for_path(path, format)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    asyncio.run(main(sys.argv[1:]))
