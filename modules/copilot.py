@@ -29,7 +29,7 @@ async def get_alt_text_for_image(path, verbose=False):
             print("Uploading image %s as attachment" % path)
         response = await sydney.ask("Genera un alt text semplice per questa immagine", attachment=path)
         if verbose:
-            print("Response received: %s " % response)
+            print(" Response received: %s " % response)
         await sydney.reset_conversation()
 
     return response

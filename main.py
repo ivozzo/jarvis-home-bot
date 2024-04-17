@@ -42,8 +42,10 @@ def usage():
 Jarvis HELP
           
     -h  --help                  Shows this help section
-    -a  --generate--alt-text    Generate alt text for images found in a selected path
+    -a  --generate-alt-text    Generate alt text for images found in a selected path
     -f  --format                Select the format to filter the images
+    -v  --verbose               Enable verbose mode
+    -o  --overwrite             Enable overwrite mode
     
 Select none of the above to enter CLI mode
 """)
