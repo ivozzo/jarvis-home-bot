@@ -2,17 +2,14 @@ import os
 from PIL import Image
 
 
-def find_all_images(input_path, output_path, format="jpg"):
+def find_all_images(input_path, output_path, format):
     images = []
-
     try:
         for (root, dirs, file) in os.walk(input_path):
             for f in file:
                 if format in f:
                     print("Found file: %s " % f)
-                    if not input_path.endswith("/"):
-                        input_path = input_path + "/"
-                    images.append(generate_thumbnails(input_path, output_path, f))
+                    images.append(dict(thumbnail=generate_thumbnails(input_path, output_path, f), filename=f))
     except FileNotFoundError:
         print("ERROR: you haven't specified a valid path!")
 
@@ -29,4 +26,11 @@ def generate_thumbnails(input_path, output_path, filename):
     image.save(output_filepath)
 
     return output_filepath
+
+
+def generate_alt_text_file(output_path, filename, format, body):
+    output_filepath = output_path + filename.replace(format, '.txt')
+    print("Saving response in %s " % output_filepath)
+    with open(output_filepath, 'w') as f:
+        f.write(body)
 

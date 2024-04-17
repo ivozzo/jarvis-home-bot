@@ -61,7 +61,7 @@ async def main(argv):
         asyncio.run(cli())
     else:
         # Default values
-        format = "jpg"
+        format = ".jpg"
         path = "."
         command = ""
 
@@ -72,9 +72,13 @@ async def main(argv):
                 sys.exit()
             elif o in ("-a", "--generate-alt-text"):
                 path = a
+                if not path.endswith("/"):
+                    path = path + "/"
                 command = "alttext"
             elif o in ("-f", "--format"):
                 format = a
+                if not format.startswith("."):
+                    format = "." + format
 
         print(command)
         if command == "alttext":
