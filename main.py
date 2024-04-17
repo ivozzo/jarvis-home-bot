@@ -1,8 +1,8 @@
 import asyncio
-import modules.alt_text as altText
+import modules.utilities as altText
 import sys
 import getopt
-
+import modules.copilot as copilot
 
 async def cli() -> None:
 
@@ -26,7 +26,7 @@ async def cli() -> None:
                 continue
 
             print("Creating alt text for all the photographs in the path prompted")
-            altText.find_all_images(command[1], command[2])
+            # altText.find_all_images(command[1], command[2])
             continue
 
         elif prompt == "exit":
@@ -42,13 +42,13 @@ Jarvis HELP
     -a  --generate--alt-text    Generate alt text for images found in a selected path
     -f  --format                Select the format to filter the images
     
-Don't select any of the above to enter CLI mode
+Select none of the above to enter CLI mode
 """)
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "haf:v", ["generate-alt-text=", "format="])
+        opts, args = getopt.getopt(argv, "h:a:f", ["help", "generate-alt-text=", "format="])
     except getopt.GetoptError as error:
         print(error)
         sys.exit(2)
@@ -58,18 +58,26 @@ def main(argv):
         asyncio.run(cli())
     else:
         # Default values
-        format="jpg"
-        path="."
+        format = "jpg"
+        path = "."
+        command = ""
 
+        print(opts)
         # Getting user input values
-        for opt, arg in opts:
-            if opt == '-h':
+        for o, a in opts:
+            if o == '-h':
                 usage()
                 sys.exit()
-            elif opt in ("-a", "--generate-alt-text"):
-                print("Generating alt text for images in path: %s" % arg)
-            elif opt in ("-f", "--format"):
-                print(arg)
+            elif o in ("-a", "--generate-alt-text"):
+                path = a
+                command = "alttext"
+            elif o in ("-f", "--format"):
+                format = a
+
+        print(command)
+        if command == "alttext":
+            print("Generating alt text for images in path: %s with format: %s" % (path, format))
+            copilot.get_alt_text(path, format)
 
 
 if __name__ == "__main__":
