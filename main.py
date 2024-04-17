@@ -51,7 +51,7 @@ Select none of the above to enter CLI mode
 
 async def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "h:a:f", ["help", "generate-alt-text=", "format="])
+        opts, args = getopt.getopt(argv, "h:a:f:ov", ["help", "generate-alt-text=", "format=", "overwrite", "verbose"])
     except getopt.GetoptError as error:
         print(error)
         sys.exit(2)
@@ -64,6 +64,8 @@ async def main(argv):
         format = ".jpg"
         path = "."
         command = ""
+        overwrite = False
+        verbose = False
 
         # Getting user input values
         for o, a in opts:
@@ -79,11 +81,19 @@ async def main(argv):
                 format = a
                 if not format.startswith("."):
                     format = "." + format
+            elif o in ("-o", "--overwrite"):
+                overwrite = True
+            elif o in ("-v", "--verbose"):
+                verbose = True
 
-        print(command)
         if command == "alttext":
-            print("Generating alt text for images in path: %s with format: %s" % (path, format))
-            await copilot.get_alt_text_for_path(path, format)
+            print("Generating alt text for images in selected path")
+            if verbose:
+                print("-"*40)
+                print("Path: %s" % path)
+                print("Format: %s" % format)
+                print("-" * 40)
+            await copilot.get_alt_text_for_path(path, format, verbose, overwrite)
 
 
 if __name__ == "__main__":
