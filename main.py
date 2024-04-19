@@ -7,30 +7,45 @@ import certifi
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
 
+async def cli_usage():
+    print("""
+Jarvis CLI HELP
+
+    help            Shows this help section
+    exit            Exit from CLI mode
+    set-cookie     Set the cookie needed for Copilot, you'll be prompted to paste your cookie
+    unset-cookie    Delete che cookie needed for Copilot previously set
+""")
+
+
 async def cli() -> None:
 
     print("Starting Jarvis, please hold on.")
     print("Jarvis startup completed.")
+
+    copilot_env_variable = "BING_COOKIES"
 
     while True:
         prompt = input("command: ")
         print("Received command %s" % prompt)
 
         # Create alt text for photographs contained in a folder
-        if prompt.startswith("alttext"):
-            command = prompt.split(' ')
+        if prompt == "help":
+            await cli_usage()
 
-            if len(command) == 1 or command[1] == '':
-                print("No path prompted, please add the path (relative or absolute) to your request.")
-                continue
+        if prompt == "set-cookie":
+            cookie = input("paste your cookie: ")
+            if cookie is None or cookie == "" or cookie == " ":
+                print("No cookie has been inserted")
+            else:
+                os.environ[copilot_env_variable] = cookie
+                print("Environment variable %s has been set" % copilot_env_variable)
 
-            if command[1] == "help":
-                print("Command usage: 'alttext path [format]'. I.e. 'alttext /images/2024_04_15 jpg'")
-                continue
-
-            print("Creating alt text for all the photographs in the path prompted")
-            # altText.find_all_images(command[1], command[2])
-            continue
+        if prompt == "unset-cookie":
+            answer = input("are you sure? [y/N]: ")
+            if answer != "N":
+                os.environ.pop(copilot_env_variable)
+                print("Environment variable %s has been deleted" % copilot_env_variable)
 
         elif prompt == "exit":
             print("Jarvis is shutting down. Thank you sir")
@@ -42,7 +57,7 @@ def usage():
 Jarvis HELP
           
     -h  --help                  Shows this help section
-    -a  --generate-alt-text    Generate alt text for images found in a selected path
+    -a  --generate-alt-text     Generate alt text for images found in a selected path
     -f  --format                Select the format to filter the images
     -v  --verbose               Enable verbose mode
     -o  --overwrite             Enable overwrite mode
@@ -58,9 +73,6 @@ async def main(argv):
         print(error)
         sys.exit(2)
 
-    if len(opts) == 0:
-        print("Entering Jarvis CLI mode...")
-        asyncio.run(cli())
     else:
         # Default values
         format = ".jpg"
@@ -99,4 +111,9 @@ async def main(argv):
 
 
 if __name__ == "__main__":
-    asyncio.run(main(sys.argv[1:]))
+    if len(sys.argv) > 1:
+        print("Executing Jarvis in command mode...")
+        asyncio.run(main(sys.argv[1:]))
+    else:
+        print("Entering Jarvis CLI mode...")
+        asyncio.run(cli())
