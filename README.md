@@ -1,5 +1,9 @@
 # Jarvis
 
+[![Latest Release](https://img.shields.io/github/v/release/ivozzo/jarvis-home-bot.svg)](https://github.com/ivozzo/jarvis-bot/releases/tag/v1.0.0)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/ivozzo/jarvis-bot/blob/master/LICENSE)
+
 Useful bot for...stuff.
 
 ## Features
@@ -9,7 +13,7 @@ Useful bot for...stuff.
 
 ## Requirements
 
-- Python 3.10 or newer
+- Python 3.9 or newer
 
 ## Usage
 Jarvis can be used in Command mode or CLI mode.
