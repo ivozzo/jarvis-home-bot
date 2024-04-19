@@ -59,6 +59,7 @@ Jarvis HELP
     -h  --help                  Shows this help section
     -a  --generate-alt-text     Generate alt text for images found in a selected path
     -f  --format                Select the format to filter the images
+    -p  --prompt                Use a custom prompt enclosed with " " 
     -v  --verbose               Enable verbose mode
     -o  --overwrite             Enable overwrite mode
     
@@ -68,7 +69,8 @@ Select none of the above to enter CLI mode
 
 async def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "h:a:f:ov", ["help", "generate-alt-text=", "format=", "overwrite", "verbose"])
+        opts, args = getopt.getopt(argv, "h:a:f:p:ov", ["help", "generate-alt-text=", "format=", "prompt=",
+                                                        "overwrite", "verbose"])
     except getopt.GetoptError as error:
         print(error)
         sys.exit(2)
@@ -80,6 +82,7 @@ async def main(argv):
         command = ""
         overwrite = False
         verbose = False
+        prompt = ""
 
         # Getting user input values
         for o, a in opts:
@@ -99,15 +102,21 @@ async def main(argv):
                 overwrite = True
             elif o in ("-v", "--verbose"):
                 verbose = True
+            elif o in ("-p", "--prompt"):
+                prompt = a
 
         if command == "alttext":
             print("Generating alt text for images in selected path")
+            if prompt == "":
+                prompt = "Generate a brief alt text for this image"
+
             if verbose:
                 print("-"*40)
                 print("Path: %s" % path)
                 print("Format: %s" % format)
+                print("Prompt: %s" % prompt)
                 print("-" * 40)
-            await copilot.get_alt_text_for_path(path, format, verbose, overwrite)
+            await copilot.get_alt_text_for_path(path, format, prompt, verbose, overwrite)
 
 
 if __name__ == "__main__":
