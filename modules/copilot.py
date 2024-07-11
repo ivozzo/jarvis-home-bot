@@ -8,15 +8,20 @@ from sydney import SydneyClient
 
 
 async def get_alt_text_for_path(input_path, format, prompt, verbose=False, overwrite=False):
-    output_path = "thumbnails/"
-    if not os.path.exists(output_path):
+    thumbnail_output_path = "thumbnails/"
+    if not os.path.exists(thumbnail_output_path):
         if verbose:
             print("-" * 40)
-            print("Creating thumbnail directory: %s" % output_path)
-        os.mkdir(output_path)
+            print("Creating thumbnail directory: %s" % thumbnail_output_path)
+        os.mkdir(thumbnail_output_path)
+    else:
+        if verbose:
+            print("-" * 40)
+            print("thumbnail directory already existing, clearing: %s" % thumbnail_output_path)
+        utilities.delete_all_files(thumbnail_output_path, verbose)
 
     print("Retrieving images")
-    images = utilities.find_all_images(input_path, output_path, format, verbose, overwrite)
+    images = utilities.find_all_images(input_path, thumbnail_output_path, format, verbose, overwrite)
     total_images = len(images)
     processed_images = 0
     error_images = 0

@@ -35,6 +35,19 @@ def find_all_images(input_path, output_path, format, verbose=False, overwrite=Fa
     return images
 
 
+def delete_all_files(input_path, verbose=False):
+    try:
+        if verbose:
+            print("Deleting file:")
+        for (root, dirs, file) in os.walk(input_path):
+            for f in file:
+                if verbose:
+                    print("- %s " % f)
+                os.remove(input_path + f)
+    except FileNotFoundError:
+        print("ERROR: you haven't specified a valid path!")
+
+
 def check_if_thumbnail_already_exists(output_path, filename, verbose=False):
     for (root, dirs, file) in os.walk(output_path):
         for f in file:
