@@ -2,6 +2,7 @@ import asyncio
 import sys
 import getopt
 import modules.copilot as copilot
+import modules.alternat as alternat
 import os
 import certifi
 os.environ['SSL_CERT_FILE'] = certifi.where()
@@ -116,7 +117,7 @@ async def main(argv):
                 print("Format: %s" % format)
                 print("Prompt: %s" % prompt)
                 print("-" * 40)
-            await copilot.get_alt_text_for_path(path, format, prompt, verbose, overwrite)
+            await alternat.get_alt_text_for_path(path, format, verbose, overwrite)
 
 
 if __name__ == "__main__":

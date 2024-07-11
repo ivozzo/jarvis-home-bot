@@ -25,7 +25,7 @@ def find_all_images(input_path, output_path, format, verbose=False, overwrite=Fa
                     if not check_alt_file_existence(input_path, filename=f, format=format, verbose=verbose) or overwrite:
                         if verbose:
                             print("     Enqueueing image for Alt Text generation")
-                        images.append(dict(thumbnail=thumb, filename=f))
+                        images.append(dict(thumbnail=thumb, filename=f, path=input_path))
                     else:
                         if verbose:
                             print("     Alt text has already been generated, skipping")
