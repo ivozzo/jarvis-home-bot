@@ -5,12 +5,13 @@ from PIL import Image
 def find_all_images(input_path, output_path, format, verbose=False, overwrite=False):
     images = []
     try:
-        print("-"*40)
-        print("The following images has been found:")
+        if verbose:
+            print("The following images has been found:")
         for (root, dirs, file) in os.walk(input_path):
             for f in file:
                 if format in f:
-                    print("- %s " % f)
+                    if verbose:
+                        print("- %s " % f)
 
                     # Check if thumbnail has already been created, if not or overwriting create it again
                     if check_if_thumbnail_already_exists(output_path, filename=f, verbose=verbose) and not overwrite:
@@ -18,7 +19,8 @@ def find_all_images(input_path, output_path, format, verbose=False, overwrite=Fa
                             print("     Thumbnail already existing, skipping")
                         thumb = output_path + f
                     else:
-                        print("     Generating thumbnail")
+                        if verbose:
+                            print("     Generating thumbnail")
                         thumb = generate_thumbnails(input_path, output_path, f)
 
                     # Check if text has already been generated, if not or overwriting enqueue the item for generation
@@ -33,6 +35,17 @@ def find_all_images(input_path, output_path, format, verbose=False, overwrite=Fa
         print("ERROR: you haven't specified a valid path!")
 
     return images
+
+
+def set_cookie(copilot_env_variable, verbose=False):
+    cookie_file="bing_cookie.txt"
+    with (open(cookie_file, 'r')) as f:
+        cookie = f.read()
+        if verbose:
+            print("-" * 40)
+            print(cookie)
+            print("-" * 40)
+        os.environ[copilot_env_variable] = cookie
 
 
 def delete_all_files(input_path, verbose=False):

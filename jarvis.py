@@ -2,9 +2,12 @@ import asyncio
 import sys
 import getopt
 import modules.copilot as copilot
+import modules.utilities as utilities
 import os
 import certifi
 os.environ['SSL_CERT_FILE'] = certifi.where()
+
+copilot_env_variable = "BING_COOKIES"
 
 
 async def cli_usage():
@@ -22,8 +25,6 @@ async def cli() -> None:
 
     print("Starting Jarvis, please hold on.")
     print("Jarvis startup completed.")
-
-    copilot_env_variable = "BING_COOKIES"
 
     while True:
         prompt = input("command: ")
@@ -69,8 +70,8 @@ Select none of the above to enter CLI mode
 
 async def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "h:a:f:p:ov", ["help", "generate-alt-text=", "format=", "prompt=",
-                                                        "overwrite", "verbose"])
+        opts, args = getopt.getopt(argv, "h:a:f:p:sov", ["help", "generate-alt-text=", "format=", "prompt=",
+                                                         "set-cookie", "overwrite", "verbose"])
     except getopt.GetoptError as error:
         print(error)
         sys.exit(2)
@@ -83,12 +84,15 @@ async def main(argv):
         overwrite = False
         verbose = False
         prompt = ""
+        use_cookie = False
 
         # Getting user input values
         for o, a in opts:
             if o == '-h':
                 usage()
                 sys.exit()
+            elif o in ("-s", "--set-cookie"):
+                use_cookie = True
             elif o in ("-a", "--generate-alt-text"):
                 path = a
                 if not path.endswith("/"):
@@ -110,12 +114,17 @@ async def main(argv):
             if prompt == "":
                 prompt = "Generate a brief alt text for this image"
 
+            if use_cookie:
+                print("Reading cookie from file and setting it as environment variable")
+                utilities.set_cookie(copilot_env_variable, verbose)
+
             if verbose:
                 print("-"*40)
                 print("Path: %s" % path)
                 print("Format: %s" % format)
                 print("Prompt: %s" % prompt)
                 print("-" * 40)
+
             await copilot.get_alt_text_for_path(path, format, prompt, verbose, overwrite)
 
 
