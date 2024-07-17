@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from PIL.ExifTags import TAGS
 
 
 def find_all_images(input_path, output_path, format, verbose=False, overwrite=False):
@@ -23,11 +24,15 @@ def find_all_images(input_path, output_path, format, verbose=False, overwrite=Fa
                             print("     Generating thumbnail")
                         thumb = generate_thumbnails(input_path, output_path, f)
 
+                    metadata = get_metadata(input_path, f)
+
                     # Check if text has already been generated, if not or overwriting enqueue the item for generation
                     if not check_alt_file_existence(input_path, filename=f, format=format, verbose=verbose) or overwrite:
                         if verbose:
                             print("     Enqueueing image for Alt Text generation")
-                        images.append(dict(thumbnail=thumb, filename=f))
+                        images.append(dict(thumbnail=thumb,
+                                           filename=f,
+                                           metadata=metadata))
                     else:
                         if verbose:
                             print("     Alt text has already been generated, skipping")
@@ -86,6 +91,25 @@ def generate_thumbnails(input_path, output_path, filename):
     image.save(output_filepath)
 
     return output_filepath
+
+
+def get_metadata(input_path, filename):
+    metadata = []
+    input_filepath = input_path + filename
+
+    image = Image.open(input_filepath)
+    exifdata = image.getexif()
+
+    for tag_id in exifdata:
+        tag = TAGS.get(tag_id, tag_id)
+        data = exifdata.get(tag_id)
+        if isinstance(data, bytes):
+            data = data.decode()
+
+        metadata.append(dict(tag=tag,
+                             value=data))
+
+    return metadata
 
 
 def generate_alt_text_file(output_path, filename, format, body, verbose=False):

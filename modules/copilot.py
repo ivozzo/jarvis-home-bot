@@ -33,6 +33,13 @@ async def get_alt_text_for_path(input_path, format, prompt, verbose=False, overw
         if verbose:
             print("=" * 40)
             print("Elaborating image: %s" % image.get("filename"))
+        if verbose:
+            print("=" * 40)
+            print("Image metadata:")
+            for metadata in image.get("metadata"):
+                tag = metadata.get("tag")
+                value = metadata.get("value")
+                print(f"{tag:25}: {value}")
         try:
             response = await get_alt_text_for_image(image.get("thumbnail"), prompt, verbose)
             utilities.generate_alt_text_file(input_path, image.get("filename"), format, response)
